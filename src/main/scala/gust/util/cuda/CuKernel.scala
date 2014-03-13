@@ -4,7 +4,7 @@ import jcuda.driver.{CUstream, CUfunction, CUcontext}
 import jcuda.driver.JCudaDriver._
 
 object CuKernel {
-  def invoke( workDims: Array[Int], blockDims: Array[Int], fn: CUfunction)(args: Any*)(implicit context: CuContext):Unit = {
+  def invoke( workDims: Array[Int], blockDims: Array[Int], fn: CUfunction)(args: Any*)(implicit context: CuContext,stream:CUstream):Unit = {
     context.withPush {
       val params = setupKernelParameters(args:_*)
       val padded = blockDims.padTo(3, 1)
@@ -12,7 +12,7 @@ object CuKernel {
       cuLaunchKernel(fn,
         roundUps(0), roundUps(1), roundUps(2),
         padded(0), padded(1), padded(2),
-        0, new CUstream(),
+        0, stream,
         params, null)
       jcuda.runtime.JCuda.cudaFreeHost(params)
 

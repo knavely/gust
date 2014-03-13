@@ -93,7 +93,7 @@ package object cuda {
 
   @arityize(10)
   class CuKernel[@arityize.replicate T](module: CuModule, fn: CUfunction, blockDims: Array[Int]) {
-    def apply(workSize1: Int, workSize2: Int = 1, workSize3: Int = 1)(@arityize.replicate t: T @arityize.relative(t))(implicit context: CuContext):Unit = {
+    def apply(workSize1: Int, workSize2: Int = 1, workSize3: Int = 1)(@arityize.replicate t: T @arityize.relative(t))(implicit context: CuContext, stream:CUstream = new CUstream() ):Unit = {
       CuKernel.invoke(Array(workSize1, workSize2, workSize3), blockDims, fn)((t: @arityize.replicate ))
     }
   }
